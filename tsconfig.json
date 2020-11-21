@@ -1,0 +1,10 @@
+{
+  "extends": "@quasar/app/tsconfig-preset",
+  "no-floating-promises": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "es5",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+  }
+}
