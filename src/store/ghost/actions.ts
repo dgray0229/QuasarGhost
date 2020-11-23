@@ -1,22 +1,42 @@
 import { ActionTree } from 'vuex';
-
 import { StateInterface } from '../index';
 import { GhostStateInterface } from './state';
 import ghost from '../../config/ghostapi';
 
 const actions: ActionTree<GhostStateInterface, StateInterface> = {
-  async fetchPosts(context): Promise<void> {
+  async fetchPostInfo(context): Promise<void> {
     try {
-      const posts = await ghost.posts.browse({ include: ['tags', 'authors'] });
+      const posts = await ghost.posts.browse({
+        include: ['tags', 'authors'],
+        fields: [
+          'id',
+          'uuid',
+          'title',
+          'slug',
+          'excerpt',
+          'created_at',
+          'feature_image'
+        ]
+      });
       context.commit('SET_POSTS', posts);
     } catch ({ message }) {
       console.error(message);
     }
   },
-  async fetchPages(context): Promise<void> {
+  async fetchPageInfo(context): Promise<void> {
     try {
       const pages = await ghost.pages.browse();
       context.commit('SET_PAGES', pages);
+    } catch ({ message }) {
+      console.error(message);
+    }
+  },
+  async fetchPost(context): Promise<void> {
+    try {
+      const post = await ghost.posts.browse({
+        include: ['tags', 'authors'],
+      });
+      context.commit('SET_POST', post);
     } catch ({ message }) {
       console.error(message);
     }

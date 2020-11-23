@@ -3,6 +3,7 @@
     clickable
     :target="target"
     :to="{path: link, params: {slug: link}}"
+    exact
   >
     <q-item-section
       v-if="icon"

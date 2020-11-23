@@ -15,26 +15,25 @@
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import { mapState } from 'vuex';
-import { StateInterface } from '../store';
-
 import { PostOrPage } from '@tryghost/content-api';
 
 export default defineComponent({
   name: 'SinglePost',
   data() {
-    return { slug: '' };
+    return { slug: '', post: {} };
   },
-  created() {
+  async created() {
     this.slug = this.$route.params.slug;
+    this.post = await this.getPost();
   },
-  computed: mapState({
-    post(state: StateInterface) {
-      const posts = state?.GhostModule?.posts;
-      const result = posts?.find((post: PostOrPage) => post?.slug === this.slug);
-      return result;
+  methods: {
+    getPost: async function(): Promise<PostOrPage> {
+      const post: PostOrPage = await this.$ghost.posts.read({
+        slug: this.slug
+      });
+      return Promise.resolve(post);
     }
-  })
+  }
 });
 </script>
 <style lang="scss">

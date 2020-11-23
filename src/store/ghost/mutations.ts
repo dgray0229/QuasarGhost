@@ -1,6 +1,6 @@
 import { MutationTree } from 'vuex';
 import { GhostStateInterface } from './state';
-import { PostsOrPages } from '@tryghost/content-api';
+import { PostOrPage, PostsOrPages } from '@tryghost/content-api';
 
 const mutation: MutationTree<GhostStateInterface> = {
   SET_POSTS(state, posts: PostsOrPages) {

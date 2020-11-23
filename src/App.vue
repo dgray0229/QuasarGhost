@@ -8,8 +8,8 @@ import { defineComponent } from '@vue/composition-api';
 export default defineComponent({
   name: 'App',
   created() {
-    this.$store.dispatch('GhostModule/fetchPosts')
-    this.$store.dispatch('GhostModule/fetchPages')
+    void this.$store.dispatch('GhostModule/fetchPostInfo')
+    void this.$store.dispatch('GhostModule/fetchPageInfo')
   }
 });
 </script>

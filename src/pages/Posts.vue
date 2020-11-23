@@ -2,9 +2,7 @@
   <q-page padding>
     <!-- content -->
     <div class="q-pa-md">
-      <div
-        class="q-pa-md row items-start q-gutter-md postcard-container"
-      >
+      <div class="q-pa-md row items-start q-gutter-md postcard-container">
         <PostCard
           class="my-card"
           v-for="post in posts"
@@ -31,8 +29,7 @@ export default defineComponent({
   components: { PostCard },
   computed: {
     ...mapGetters({ posts: 'GhostModule/allPosts' })
-  },
-
+  }
 });
 </script>
 <style lang="scss" scoped>
