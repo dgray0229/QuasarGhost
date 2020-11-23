@@ -26,11 +26,9 @@
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
 import dayjs from 'dayjs';
-import * as customParseFormat from 'dayjs/plugin/customParseFormat';
-dayjs.extend(customParseFormat);
-export interface PostCardInterface {
-  props: Record<string, unknown>;
-}
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+void dayjs.extend(customParseFormat);
+
 export default defineComponent({
   name: 'PostCard',
   props: {
@@ -41,7 +39,7 @@ export default defineComponent({
     feature_image: String,
     slug: String,
     id: String
-  } as PostCardInterface['props'],
+  },
   filters: {
     formatDate: function(value: Date) {
       if (value) {

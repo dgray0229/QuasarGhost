@@ -18,10 +18,7 @@
     "core-js": "^3.6.5",
     "dayjs": "^1.9.4",
     "quasar": "^1.0.0",
-    "vue-class-component": "^7.2.6",
-    "vue-i18n": "^8.0.0",
-    "vue-masonry": "^0.11.8",
-    "vue-property-decorator": "^9.1.2"
+    "vue-i18n": "^8.0.0"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",

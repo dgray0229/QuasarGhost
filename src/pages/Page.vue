@@ -11,12 +11,7 @@ import { mapState } from 'vuex';
 import { Route } from 'vue-router';
 import { StateInterface } from '../store';
 
-import { PostsOrPages, PostOrPage } from '@tryghost/content-api';
-
-export interface WhyPageState {
-  page: PostsOrPages;
-  slug: PostOrPage['slug'];
-}
+import { PostOrPage } from '@tryghost/content-api';
 
 export default defineComponent({
   name: 'Page',
@@ -27,15 +22,15 @@ export default defineComponent({
     this.slug = this.$route.params.slug;
   },
   watch: {
-    $route(to: Route, from: Route) {
+    $route(to: Route) {
       this.slug = to.params.slug;
     }
   },
   computed: mapState({
     page(state: StateInterface) {
-      const result: PostsOrPages = state?.GhostModule?.pages;
-      result.filter((page: PostOrPage) => page.slug === this.slug);
-      return result[0];
+      const result = state?.GhostModule?.pages;
+      result?.find((page: PostOrPage) => page.slug === this.slug);
+      return result;
     }
   })
 });

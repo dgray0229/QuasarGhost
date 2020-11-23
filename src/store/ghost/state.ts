@@ -2,8 +2,8 @@ import { PostsOrPages } from '@tryghost/content-api';
 
 export interface GhostStateInterface {
   prop: boolean;
-  posts?: PostsOrPages;
-  pages?: PostsOrPages;
+  posts?: PostsOrPages | never[];
+  pages?: PostsOrPages | never[];
 }
 
 const state: GhostStateInterface = {

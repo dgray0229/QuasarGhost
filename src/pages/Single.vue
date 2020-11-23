@@ -17,14 +17,9 @@
 import { defineComponent } from '@vue/composition-api';
 import { mapState } from 'vuex';
 import { StateInterface } from '../store';
-import { Route } from 'vue-router';
 
-import { Identification, PostsOrPages, PostOrPage } from '@tryghost/content-api';
+import { PostOrPage } from '@tryghost/content-api';
 
-export interface SinglePostState {
-  post: PostsOrPages;
-  slug: Identification['slug'];
-}
 export default defineComponent({
   name: 'SinglePost',
   data() {
@@ -35,9 +30,9 @@ export default defineComponent({
   },
   computed: mapState({
     post(state: StateInterface) {
-      const result: PostsOrPages = state?.GhostModule?.posts;
-      result.filter((post: PostOrPage) => post?.slug === this.slug);
-      return result[0];
+      const result = state?.GhostModule?.posts;
+      result?.find((post: PostOrPage) => post?.slug === this.slug);
+      return result;
     }
   })
 });
