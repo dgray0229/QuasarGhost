@@ -31,12 +31,10 @@ const actions: ActionTree<GhostStateInterface, StateInterface> = {
       console.error(message);
     }
   },
-  async fetchPost(context): Promise<void> {
+  async fetchTags(context): Promise<void> {
     try {
-      const post = await ghost.posts.browse({
-        include: ['tags', 'authors'],
-      });
-      context.commit('SET_POST', post);
+      const tags = await ghost.tags.browse();
+      context.commit('SET_TAGS', tags);
     } catch ({ message }) {
       console.error(message);
     }
