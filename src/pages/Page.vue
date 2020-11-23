@@ -28,8 +28,8 @@ export default defineComponent({
   },
   computed: mapState({
     page(state: StateInterface) {
-      const result = state?.GhostModule?.pages;
-      result?.find((page: PostOrPage) => page.slug === this.slug);
+      const pages = state?.GhostModule?.pages;
+      const result = pages?.find((page: PostOrPage) => page.slug === this.slug);
       return result;
     }
   })

@@ -5,12 +5,11 @@
 </template>
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-
 export default defineComponent({
   name: 'App',
   created() {
-    this.$store.dispatch('fetchPosts');
-    this.$store.dispatch('fetchPages');
+    this.$store.dispatch('GhostModule/fetchPosts')
+    this.$store.dispatch('GhostModule/fetchPages')
   }
 });
 </script>

@@ -30,8 +30,8 @@ export default defineComponent({
   },
   computed: mapState({
     post(state: StateInterface) {
-      const result = state?.GhostModule?.posts;
-      result?.find((post: PostOrPage) => post?.slug === this.slug);
+      const posts = state?.GhostModule?.posts;
+      const result = posts?.find((post: PostOrPage) => post?.slug === this.slug);
       return result;
     }
   })
