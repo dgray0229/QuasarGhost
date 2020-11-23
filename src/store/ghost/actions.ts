@@ -13,6 +13,7 @@ const actions: ActionTree<GhostStateInterface, StateInterface> = {
           'uuid',
           'title',
           'slug',
+          'custom_excerpt',
           'excerpt',
           'created_at',
           'feature_image'

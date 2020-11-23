@@ -15,7 +15,15 @@
           Devin Gray
         </q-toolbar-title>
 
-        <div>&copy; {{ new Date().getFullYear() }}</div>
+        <div>
+          <q-btn
+            flat
+            round
+            @click="$q.dark.toggle()"
+            :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
+          />
+          &copy; {{ new Date().getFullYear() }}
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -23,10 +31,10 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      content-class="bg-grey-1"
+      content-class=""
     >
       <q-list>
-        <q-item-label header class="text-grey-8">
+        <q-item-label header>
           Pages
         </q-item-label>
         <EssentialRoute
@@ -82,8 +90,10 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const essentialLinks = ref(linksData);
-
     return { leftDrawerOpen, essentialLinks };
-  }
+  },
+  data() {
+    return {};
+  },
 });
 </script>

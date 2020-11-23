@@ -9,8 +9,8 @@
         infinite
         :autoplay="autoplay"
         arrows
-        transition-prev="slide-left"
-        transition-next="slide-right"
+        transition-prev="slide-right"
+        transition-next="slide-left"
         @mouseenter="autoplay = false"
         @mouseleave="autoplay = true"
       >
