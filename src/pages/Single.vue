@@ -15,16 +15,28 @@
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
+import { Route } from 'vue-router';
 import { PostOrPage } from '@tryghost/content-api';
+
+interface Post {
+  post: PostOrPage,
+  slug: string,
+  title: string,
+}
 
 export default defineComponent({
   name: 'SinglePost',
   data() {
-    return { slug: '', post: {} };
+    return { slug: '', title: '', post: {} } as Post;
   },
-  async created() {
-    this.slug = this.$route.params.slug;
-    this.post = await this.getPost();
+  created() {
+    void this.updatePostInfo();
+  },
+  watch: {
+    $route(to: Route) {
+      if (this.slug === to.params.slug) return;
+      this.updatePostInfo();
+    }
   },
   methods: {
     getPost: async function(): Promise<PostOrPage> {
@@ -32,8 +44,41 @@ export default defineComponent({
         slug: this.slug
       });
       return Promise.resolve(post);
+    },
+    updatePostInfo: async function(): Promise<void> {
+      this.slug = this.$route.params.slug;
+      this.post = await this.getPost();
+      this.title = this.post.title || '';
     }
+
+  },
+   meta() {
+    return {
+      // sets document title
+      title: this.post?.title,
+      // optional; sets final title as "Index Page - My Website", useful for multiple level meta
+      titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
+
+      // meta tags
+      meta: {
+        description: { name: 'description', content: this.post?.excerpt },
+        keywords: { name: 'keywords', content: 'The Blog of Devin Gray' },
+        equiv: {
+          'http-equiv': 'Content-Type',
+          content: 'text/html; charset=UTF-8'
+        },
+        // note: for Open Graph type metadata you will need to use SSR, to ensure page is rendered by the server
+        ogTitle: {
+          name: 'og:title',
+          // optional; similar to titleTemplate, but allows templating with other meta properties
+          template(ogTitle: string) {
+            return `${ogTitle} - The Blog of Devin Gray`;
+          }
+        }
+      }
+    };
   }
+
 });
 </script>
 <style lang="scss">

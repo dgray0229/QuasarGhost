@@ -27,16 +27,15 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class=""
-    >
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="">
+
       <q-list>
         <q-item-label header>
           Pages
         </q-item-label>
+        <q-avatar class="row flex-center">
+          <img src="//www.gravatar.com/avatar/9c5cf43724c7430746fe92cea8bb0a6c?s=250&d=mm&r=x" />
+        </q-avatar>
         <EssentialRoute
           v-for="link in essentialLinks"
           :key="link.title"
@@ -94,6 +93,6 @@ export default defineComponent({
   },
   data() {
     return {};
-  },
+  }
 });
 </script>

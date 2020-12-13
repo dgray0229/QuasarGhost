@@ -10,34 +10,44 @@ import { defineComponent } from '@vue/composition-api';
 import { Route } from 'vue-router';
 import { PostOrPage } from '@tryghost/content-api';
 
+interface Page {
+  page: PostOrPage,
+  slug: string,
+  title: string,
+}
+
 export default defineComponent({
   name: 'Page',
   data() {
-    return { slug: '', page: {} };
+    return { page: {}, slug: '', title: '' } as Page;
   },
-  async created() {
-    this.slug = this.$route.params.slug;
-    this.page = await this.getPage();
+  created() {
+    void this.updatePageInfo();
   },
   watch: {
-    async $route(to: Route) {
+    $route(to: Route) {
       if (this.slug === to.params.slug) return;
-      this.slug = to.params.slug;
-      this.page = await this.getPage();
+      this.updatePageInfo();
     }
   },
   methods: {
-    getPage: async function() {
+    /* TODO: Convert to Getters and Setters */
+    getPage: async function(): Promise<PostOrPage> {
       const page: PostOrPage = await this.$ghost.pages.read({
         slug: this.slug
       });
       return Promise.resolve(page);
+    },
+    updatePageInfo: async function(): Promise<void> {
+      this.slug = this.$route.params.slug;
+      this.page = await this.getPage();
+      this.title = this.page.title || '';
     }
   },
   meta() {
     return {
       // sets document title
-      title: `${this.page.title}`,
+      title: this.page?.title,
       // optional; sets final title as "Index Page - My Website", useful for multiple level meta
       titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
 
