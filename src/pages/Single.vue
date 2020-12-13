@@ -14,16 +14,16 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue';
 import { defineComponent } from '@vue/composition-api';
 import { Route } from 'vue-router';
 import { PostOrPage } from '@tryghost/content-api';
 
-interface Post {
-  post: PostOrPage,
-  slug: string,
-  title: string,
+interface Post extends Vue {
+  post: PostOrPage;
+  slug: string;
+  title: string;
 }
-
 export default defineComponent({
   name: 'SinglePost',
   data() {
@@ -50,18 +50,20 @@ export default defineComponent({
       this.post = await this.getPost();
       this.title = this.post.title || '';
     }
-
   },
-   meta() {
+  meta() {
     return {
       // sets document title
-      title: 'this.post?.title',
+      title: this.post?.title,
       // optional; sets final title as "Index Page - My Website", useful for multiple level meta
       titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
 
       // meta tags
       meta: {
-        description: { name: 'description', content: 'this.post?.excerpt' },
+        description: {
+          name: 'description',
+          content: this.post?.excerpt
+        },
         keywords: { name: 'keywords', content: 'The Blog of Devin Gray' },
         equiv: {
           'http-equiv': 'Content-Type',
@@ -78,7 +80,6 @@ export default defineComponent({
       }
     };
   }
-
 });
 </script>
 <style lang="scss">
