@@ -14,15 +14,11 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
-import Vue from 'vue';
 import { defineComponent } from '@vue/composition-api';
 import { Route } from 'vue-router';
 import { PostOrPage } from '@tryghost/content-api';
 
-interface Post extends Vue {
+interface Post {
   post: PostOrPage;
   slug: string;
   title: string;
@@ -57,7 +53,7 @@ export default defineComponent({
   meta() {
     return {
       // sets document title
-      title: this.post?.title,
+      title: 'post',
       // optional; sets final title as "Index Page - My Website", useful for multiple level meta
       titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
 
@@ -65,7 +61,7 @@ export default defineComponent({
       meta: {
         description: {
           name: 'description',
-          content: this.post?.excerpt
+          content: 'TBD'
         },
         keywords: { name: 'keywords', content: 'The Blog of Devin Gray' },
         equiv: {
