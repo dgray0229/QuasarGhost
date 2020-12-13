@@ -35,7 +35,7 @@ export default defineComponent({
   watch: {
     $route(to: Route) {
       if (this.slug === to.params.slug) return;
-      this.updatePostInfo();
+      void this.updatePostInfo();
     }
   },
   methods: {
@@ -55,13 +55,13 @@ export default defineComponent({
    meta() {
     return {
       // sets document title
-      title: this.post?.title,
+      title: 'this.post?.title',
       // optional; sets final title as "Index Page - My Website", useful for multiple level meta
       titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
 
       // meta tags
       meta: {
-        description: { name: 'description', content: this.post?.excerpt },
+        description: { name: 'description', content: 'this.post?.excerpt' },
         keywords: { name: 'keywords', content: 'The Blog of Devin Gray' },
         equiv: {
           'http-equiv': 'Content-Type',

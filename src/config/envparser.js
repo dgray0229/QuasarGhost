@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const dotenv = require('dotenv');
 const parsedEnv = dotenv.config().parsed;
 module.exports = function() {

@@ -6,6 +6,7 @@
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
 /* eslint-env node */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const envparser = require('./src/config/envparser.js');
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-floating-promises */
@@ -90,6 +91,7 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
       https: false,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       port: envparser.port,
       open: true // opens browser window automatically
     },

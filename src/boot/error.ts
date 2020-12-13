@@ -3,7 +3,7 @@ import { boot } from 'quasar/wrappers';
 TODO: Refactor error logic to use less try/catch blocks */
 declare module 'vue/types/vue' {
   interface Vue {
-    $error: (error: Error) => any;
+    $error: (error: Error) => unknown;
   }
 }
 
