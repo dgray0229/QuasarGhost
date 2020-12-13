@@ -6,6 +6,9 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 import Vue from 'vue';
 import { defineComponent } from '@vue/composition-api';
 import { Route } from 'vue-router';
