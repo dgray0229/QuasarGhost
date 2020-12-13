@@ -12,7 +12,6 @@ export default defineComponent({
     void this.$store.dispatch('GhostModule/fetchPostInfo');
     void this.$store.dispatch('GhostModule/fetchPageInfo');
     void this.$store.dispatch('GhostModule/fetchTags');
-    console.log(process.env.GHOST_API_VERSION)
   }
 });
 </script>
