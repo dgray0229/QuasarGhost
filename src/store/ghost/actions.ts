@@ -17,7 +17,7 @@ const actions: ActionTree<GhostStateInterface, StateInterface> = {
           'excerpt',
           'created_at',
           'feature_image'
-        ]
+        ],
       });
       commit('SET_POSTS', posts);
     } catch ({ message }) {

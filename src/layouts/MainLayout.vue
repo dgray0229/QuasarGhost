@@ -28,13 +28,12 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="">
-
       <q-list>
         <q-item-label header>
           Pages
         </q-item-label>
         <q-avatar class="row flex-center">
-          <img src="//www.gravatar.com/avatar/9c5cf43724c7430746fe92cea8bb0a6c?s=250&d=mm&r=x" />
+          <img :src="author.profile_image" />
         </q-avatar>
         <EssentialRoute
           v-for="link in essentialLinks"
@@ -53,46 +52,83 @@
 <script lang="ts">
 import EssentialLink from 'components/EssentialLink.vue';
 import EssentialRoute from 'components/EssentialRoute.vue';
-
-const linksData = [
-  {
-    title: 'Home',
-    caption: 'Devin Gray',
-    icon: 'home',
-    link: '/'
-  },
-  {
-    title: 'About',
-    caption: 'Devin Gray',
-    icon: 'person',
-    link: '/about-me'
-  },
-  {
-    title: 'Why I Created A Blog',
-    caption: '',
-    icon: 'web',
-    link: '/why-i-created-a-blog'
-  },
-  {
-    title: 'Posts',
-    caption: 'From Me',
-    icon: 'article',
-    link: '/posts'
-  }
-];
+// const linksData = [
+//   {
+//     title: 'Home',
+//     caption: 'Devin Gray',
+//     icon: 'home',
+//     link: '/'
+//   },
+//   {
+//     title: 'About',
+//     caption: 'Devin Gray',
+//     icon: 'person',
+//     link: '/about-me'
+//   },
+//   {
+//     title: 'Why I Created A Blog',
+//     caption: '',
+//     icon: 'web',
+//     link: '/why-i-created-a-blog'
+//   },
+//   {
+//     title: 'Posts',
+//     caption: 'From Me',
+//     icon: 'article',
+//     link: '/posts'
+//   }
+// ];
 
 import { defineComponent, ref } from '@vue/composition-api';
+import { Author, Settings, SettingsResponse } from '@tryghost/content-api';
 
+type EssentialLink = {
+  title: string
+  link: string
+}
 export default defineComponent({
   name: 'MainLayout',
   components: { EssentialLink, EssentialRoute },
   setup() {
     const leftDrawerOpen = ref(false);
-    const essentialLinks = ref(linksData);
-    return { leftDrawerOpen, essentialLinks };
+    return { leftDrawerOpen };
   },
   data() {
-    return {};
+    return {
+      essentialLinks: [] as EssentialLink[],
+      settings: {} as Settings | undefined,
+      author: {} as Author | undefined
+    };
+  },
+  methods: {
+    getNavigationLinks: async function(): Promise<EssentialLink[]> {
+      let settings: SettingsResponse | null = null;
+      try {
+        settings = await this.$ghost.settings.browse();
+      } catch ({ message }) {
+        console.error(message);
+      }
+      const navigation = settings?.navigation ?? [];
+      let essentialLinks: EssentialLink[] = navigation.map(navigationItem => ({
+        title: navigationItem?.label,
+        link: navigationItem?.url
+      }));
+      return essentialLinks;
+    },
+    getPageAuthor: async function(): Promise<Author | undefined> {
+      let author: Author | undefined;
+      try {
+        author = await this.$ghost.authors.read({ id: '1' }) ?? {};
+      } catch ({ message }) {
+        console.error(message);
+      }
+      if (author) return author;
+    }
+  },
+  created: async function() {
+
+    this.essentialLinks.push(...await this.getNavigationLinks());
+    this.author = await this.getPageAuthor();
   }
 });
 </script>

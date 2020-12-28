@@ -19,10 +19,20 @@ const routes: RouteConfig[] = [
     children: [
       { path: '', component: () => import('pages/Index.vue') },
       {
+        path: 'tag/:slug',
+        component: () => import('pages/List.vue'),
+        name: 'List'
+      },
+      {
+        path: 'author/:slug',
+        component: () => import('pages/Page.vue'),
+        name: 'page'
+      },
+      {
         path: ':slug',
         component: () => import('pages/Page.vue'),
         name: 'page'
-      }
+      },
     ]
   },
   // Always leave this as last one,

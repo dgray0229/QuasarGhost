@@ -5,7 +5,8 @@ import { GhostStateInterface } from './state';
 const getters: GetterTree<GhostStateInterface, StateInterface> = {
   // your code
   allPosts: state => state?.posts,
-  allTags: state => state?.tags
+  allTags: state => state?.tags,
+  allSettings: state => state?.settings
 };
 
 export default getters;

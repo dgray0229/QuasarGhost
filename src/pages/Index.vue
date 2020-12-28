@@ -27,13 +27,15 @@
         </q-carousel-slide>
       </q-carousel>
     </div>
+    <list-content />
   </q-page>
 </template>
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import { mapGetters } from 'vuex';
+import ListContent from 'components/ListContent.vue';
 export default defineComponent({
+  components: { ListContent },
   name: 'PageIndex',
   data() {
     return {
@@ -47,11 +49,12 @@ export default defineComponent({
       ],
 
       slide: 1,
-      autoplay: true
+      autoplay: true,
+      tags: [] as unknown[]
     };
   },
-  computed: {
-    ...mapGetters({ tags: 'GhostModule/allTags' })
+  created: async function() {
+    this.tags.push(...(await this.$ghost.tags.browse()));
   }
 });
 </script>
