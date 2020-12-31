@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Devin Gray
+          {{ author.title }}
         </q-toolbar-title>
 
         <div>
@@ -82,39 +82,15 @@
 
 <script lang="ts">
 import EssentialLink from 'components/EssentialLink.vue';
-// const linksData = [
-//   {
-//     title: 'Home',
-//     caption: 'Devin Gray',
-//     icon: 'home',
-//     link: '/'
-//   },
-//   {
-//     title: 'About',
-//     caption: 'Devin Gray',
-//     icon: 'person',
-//     link: '/about-me'
-//   },
-//   {
-//     title: 'Why I Created A Blog',
-//     caption: '',
-//     icon: 'web',
-//     link: '/why-i-created-a-blog'
-//   },
-//   {
-//     title: 'Posts',
-//     caption: 'From Me',
-//     icon: 'article',
-//     link: '/posts'
-//   }
-// ];
-
 import { defineComponent, ref } from '@vue/composition-api';
 import { Author, Settings, SettingsResponse } from '@tryghost/content-api';
 
 type EssentialLink = {
   title: string;
   link: string;
+  icon?: string;
+  caption?: string;
+
 };
 export default defineComponent({
   name: 'MainLayout',
@@ -142,7 +118,9 @@ export default defineComponent({
       const navigation = settings?.navigation ?? [];
       let essentialLinks: EssentialLink[] = navigation.map(navigationItem => ({
         title: navigationItem?.label,
-        link: navigationItem?.url
+        caption: '',
+        icon: 'article',
+        link: navigationItem?.url,
       }));
       return essentialLinks;
     },
@@ -157,7 +135,9 @@ export default defineComponent({
       let secondaryLinks: EssentialLink[] = secondary_navigation.map(
         navigationItem => ({
           title: navigationItem?.label,
-          link: navigationItem?.url
+          caption: '',
+          icon: 'article',
+          link: navigationItem?.url,
         })
       );
       return secondaryLinks;

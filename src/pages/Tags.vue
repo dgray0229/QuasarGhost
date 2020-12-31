@@ -42,7 +42,6 @@ export default defineComponent({
     }
   },
     methods: {
-    /* TODO: Convert to Getters and Setters */
     getPostsByTags: async function(slug: string): Promise<PostsOrPages> {
       const posts = await this.$ghost.posts.browse({
         filter: [`tag:${slug}`]

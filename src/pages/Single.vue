@@ -53,7 +53,7 @@ export default defineComponent({
   meta() {
     return {
       // sets document title
-      title: 'post',
+      title: `Post`,
       // optional; sets final title as "Index Page - My Website", useful for multiple level meta
       titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
 
