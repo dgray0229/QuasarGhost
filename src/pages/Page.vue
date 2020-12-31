@@ -11,37 +11,29 @@ import { Route } from 'vue-router';
 import { PostOrPage } from '@tryghost/content-api';
 
 interface Page {
-  page: PostOrPage,
-  slug: string,
-  title: string,
+  page: PostOrPage;
 }
 
 export default defineComponent({
   name: 'Page',
   data() {
-    return { page: ({}), slug: '', title: '' } as Page;
+    return { page: {} } as Page;
   },
-  created() {
-    void this.updatePageInfo();
+  async created() {
+    this.page = await this.getPage(this.$route.params.slug);
   },
   watch: {
-    $route(to: Route): void {
-      if (this.slug === to.params.slug) return;
-      void this.updatePageInfo();
+    async $route(to: Route, from: Route): Promise<void> {
+      if (from.params.slug === to.params.slug) return;
+      this.page = await this.getPage(to.params.slug);
     }
   },
   methods: {
-    /* TODO: Convert to Getters and Setters */
-    getPage: async function(): Promise<PostOrPage> {
+    getPage: async function(slug: string): Promise<PostOrPage> {
       const page: PostOrPage = await this.$ghost.pages.read({
-        slug: this.slug
+        slug
       });
       return Promise.resolve(page);
-    },
-    updatePageInfo: async function(): Promise<void> {
-      this.slug = this.$route.params.slug;
-      this.page = await this.getPage();
-      this.title = this.page.title || '';
     }
   },
   meta() {

@@ -20,13 +20,13 @@ const routes: RouteConfig[] = [
       { path: '', component: () => import('pages/Index.vue') },
       {
         path: 'tag/:slug',
-        component: () => import('pages/List.vue'),
+        component: () => import('pages/Tags.vue'),
         name: 'List'
       },
       {
         path: 'author/:slug',
-        component: () => import('pages/Page.vue'),
-        name: 'page'
+        component: () => import('pages/Author.vue'),
+        name: 'SingleAuthor'
       },
       {
         path: ':slug',

@@ -21,39 +21,33 @@
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import { Route } from 'vue-router';
 import { PostsOrPages } from '@tryghost/content-api';
 import PostCard from 'components/PostCard.vue';
 
-interface Posts {
-  posts: PostsOrPages | [];
-  slug: string;
-  title: string;
-}
-
 export default defineComponent({
-  name: 'List',
-  data() {
-    return { title: '', posts: [] } as Posts;
-  },
+  name: 'ListPosts',
   components: { PostCard },
-  watch: {
-    async $route(to: Route) {
-      if (this.slug === to.params.slug) return;
-      this.posts = await this.getPostsByTags(this.$route.params.slug);
-    }
-  },
-    methods: {
-    /* TODO: Convert to Getters and Setters */
-    getPostsByTags: async function(slug: string): Promise<PostsOrPages> {
-      const posts = await this.$ghost.posts.browse({
-        filter: [`tag:${slug}`]
-      });
-      return Promise.resolve(posts);
-    },
+  data() {
+    return {
+      posts: [] as PostsOrPages | unknown[]
+    };
   },
   created: async function() {
-    this.posts = await this.getPostsByTags(this.$route.params.slug);
+    this.posts.push(
+      ...(await this.$ghost.posts.browse({
+        include: ['tags', 'authors'],
+        fields: [
+          'id',
+          'uuid',
+          'title',
+          'slug',
+          'custom_excerpt',
+          'excerpt',
+          'created_at',
+          'feature_image'
+        ]
+      }))
+    );
   }
 });
 </script>

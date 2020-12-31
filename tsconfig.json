@@ -1,6 +1,6 @@
 {
   "extends": "@quasar/app/tsconfig-preset",
-  "no-floating-promises": false,
+  "no-floating-promises": true,
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es5",

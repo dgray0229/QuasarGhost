@@ -1,14 +1,11 @@
 <template>
   <q-item
     clickable
-    tag="a"
     :target="target"
-    :href="link"
+    :to="{ path: link, params: { slug: link } }"
+    exact
   >
-    <q-item-section
-      v-if="icon"
-      avatar
-    >
+    <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
 

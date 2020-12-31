@@ -1,14 +1,18 @@
 <template>
   <q-page padding>
-    <main v-if="post">
+    <main v-if="author">
       <div class="q-pa-md q-gutter-md">
         <div class="row justify-between">
-          <q-parallax class="blog-jumbotron" :src="post.feature_image">
-            <h1 class="text-white">{{ post.title }}</h1>
+          <q-parallax class="blog-jumbotron" :src="author.cover_image">
+            <q-avatar class="row flex-center">
+              <img :src="author.profile_image" />
+            </q-avatar>
+            <h1 class="text-white">{{ author.name }}</h1>
+            <h2 class="text-white">{{ author.location }}</h2>
           </q-parallax>
         </div>
       </div>
-      <article v-html="post.html"></article>
+      <article v-html="author.bio"></article>
     </main>
   </q-page>
 </template>
@@ -18,21 +22,30 @@ import { defineComponent } from '@vue/composition-api';
 import { Route } from 'vue-router';
 import { Author } from '@tryghost/content-api';
 
-interface Author {
+interface SingleAuthor {
   author: Author;
-  slug: string;
-  title: string;
+  name: string;
 }
 export default defineComponent({
-  name: 'SinglePost',
+  name: 'SingleAuthor',
   data() {
-    return { slug: '', title: '', author: {} } as Author;
+    return { name: '', author: {} } as SingleAuthor;
   },
-  created() {
+  async created() {
+    this.author = await this.getAuthor(this.$route.params.slug);
+  },
+  methods: {
+    getAuthor: async function(slug: string): Promise<Author> {
+      const author: Author = await this.$ghost.authors.read({
+        slug
+      });
+      return Promise.resolve(author);
+    },
   },
   watch: {
-    $route(to: Route) {
-      if (this.slug === to.params.slug) return;
+    async $route(to: Route, from: Route) {
+      if (from.params.slug === to.params.slug) return;
+      this.author = await this.getAuthor(this.$route.params.slug);
     }
   },
   meta() {

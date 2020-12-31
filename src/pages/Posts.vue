@@ -1,35 +1,15 @@
 <template>
-  <q-page padding>
-    <!-- content -->
-    <div class="q-pa-md">
-      <div class="q-pa-md row items-start q-gutter-md postcard-container">
-        <PostCard
-          class="my-card"
-          v-for="post in posts"
-          :key="post.uuid"
-          :title="post.title"
-          :excerpt="post.custom_excerpt || post.excerpt"
-          :created_at="post.created_at"
-          :feature_image="post.feature_image"
-          :slug="post.slug"
-          :id="post.id"
-        />
-      </div>
-    </div>
-  </q-page>
+  <list-posts />
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
+import ListPosts from 'components/ListPosts.vue';
 import PostCard from 'components/PostCard.vue';
 
 export default defineComponent({
   name: 'Posts',
-  components: { PostCard },
-  computed: {
-    ...mapGetters({ posts: 'GhostModule/allPosts' })
-  }
+  components: { ListPosts, PostCard },
 });
 </script>
 <style lang="scss" scoped>

@@ -1,14 +1,6 @@
 <template>
-  <q-item
-    clickable
-    :target="target"
-    :to="{path: link, params: {slug: link}}"
-    exact
-  >
-    <q-item-section
-      v-if="icon"
-      avatar
-    >
+  <q-item clickable tag="a" :target="target" :href="link">
+    <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
 
@@ -25,7 +17,7 @@
 import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'EssentialRoute',
+  name: 'EssentialLinkExample',
   props: {
     title: {
       type: String,

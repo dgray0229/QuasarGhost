@@ -27,15 +27,17 @@
         </q-carousel-slide>
       </q-carousel>
     </div>
-    <list-content />
+    <list-posts />
   </q-page>
 </template>
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import ListContent from 'components/ListContent.vue';
+import ListPosts from 'components/ListPosts.vue';
+import { Tags } from '@tryghost/content-api';
+
 export default defineComponent({
-  components: { ListContent },
+  components: { ListPosts },
   name: 'PageIndex',
   data() {
     return {
@@ -50,11 +52,17 @@ export default defineComponent({
 
       slide: 1,
       autoplay: true,
-      tags: [] as unknown[]
+      tags: [] as Tags | unknown[]
     };
   },
   created: async function() {
-    this.tags.push(...(await this.$ghost.tags.browse()));
+    this.tags.push(...(await this.$ghost.tags.browse({
+      fields: [
+        'uuid',
+        'name',
+        'feature_image'
+      ]
+    })));
   }
 });
 </script>

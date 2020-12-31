@@ -27,19 +27,50 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="">
-      <q-list>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      :breakpoint="400"
+      show-if-above
+      bordered
+      content-class=""
+    >
+      <q-list v-if="author">
+        <q-img class="" :src="author.cover_image" style="height: 150px">
+          <div class="absolute-bottom bg-transparent">
+            <q-avatar size="56px" class="q-mb-sm">
+              <img :src="author.profile_image" />
+            </q-avatar>
+            <div class="text-weight-bold">{{ author.name }}</div>
+            <div>{{ author.twitter }}</div>
+          </div>
+        </q-img>
         <q-item-label header>
-          Pages
+          {{ settings.description }}
         </q-item-label>
-        <q-avatar class="row flex-center">
-          <img :src="author.profile_image" />
-        </q-avatar>
-        <EssentialRoute
+
+        <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
           v-bind="link"
         />
+      </q-list>
+      <q-list v-if="secondaryLinks">
+        <q-expansion-item
+          expand-separator
+          icon="layers"
+          label="Useful Links"
+          :caption="author.name"
+        >
+          <q-card>
+            <q-card-section>
+              <EssentialLink
+                v-for="link in secondaryLinks"
+                :key="link.title"
+                v-bind="link"
+              />
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
       </q-list>
     </q-drawer>
 
@@ -51,7 +82,6 @@
 
 <script lang="ts">
 import EssentialLink from 'components/EssentialLink.vue';
-import EssentialRoute from 'components/EssentialRoute.vue';
 // const linksData = [
 //   {
 //     title: 'Home',
@@ -83,12 +113,12 @@ import { defineComponent, ref } from '@vue/composition-api';
 import { Author, Settings, SettingsResponse } from '@tryghost/content-api';
 
 type EssentialLink = {
-  title: string
-  link: string
-}
+  title: string;
+  link: string;
+};
 export default defineComponent({
   name: 'MainLayout',
-  components: { EssentialLink, EssentialRoute },
+  components: { EssentialLink },
   setup() {
     const leftDrawerOpen = ref(false);
     return { leftDrawerOpen };
@@ -96,6 +126,7 @@ export default defineComponent({
   data() {
     return {
       essentialLinks: [] as EssentialLink[],
+      secondaryLinks: [] as EssentialLink[],
       settings: {} as Settings | undefined,
       author: {} as Author | undefined
     };
@@ -115,10 +146,26 @@ export default defineComponent({
       }));
       return essentialLinks;
     },
+    getSecondaryNavigationLinks: async function(): Promise<EssentialLink[]> {
+      let settings: Settings | null = null;
+      try {
+        settings = await this.$ghost.settings.browse();
+      } catch ({ message }) {
+        console.error(message);
+      }
+      const secondary_navigation = settings?.secondary_navigation ?? [];
+      let secondaryLinks: EssentialLink[] = secondary_navigation.map(
+        navigationItem => ({
+          title: navigationItem?.label,
+          link: navigationItem?.url
+        })
+      );
+      return secondaryLinks;
+    },
     getPageAuthor: async function(): Promise<Author | undefined> {
       let author: Author | undefined;
       try {
-        author = await this.$ghost.authors.read({ id: '1' }) ?? {};
+        author = (await this.$ghost.authors.read({ id: '1' })) ?? {};
       } catch ({ message }) {
         console.error(message);
       }
@@ -126,8 +173,8 @@ export default defineComponent({
     }
   },
   created: async function() {
-
-    this.essentialLinks.push(...await this.getNavigationLinks());
+    this.essentialLinks.push(...(await this.getNavigationLinks()));
+    this.secondaryLinks.push(...(await this.getSecondaryNavigationLinks()));
     this.author = await this.getPageAuthor();
   }
 });
