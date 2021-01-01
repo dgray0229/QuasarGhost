@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import GhostStateInterface from './ghost/state';
 // import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
-import GhostModule from './ghost';
+import ghostModule from './ghost';
 
 /*
  * If not building with SSR mode, you can
@@ -15,7 +15,7 @@ export interface StateInterface {
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   // example: unknown;
-  GhostModule: typeof GhostStateInterface;
+  ghostModule: typeof GhostStateInterface;
 }
 
 export default store(function ({ Vue }) {
@@ -23,7 +23,7 @@ export default store(function ({ Vue }) {
 
   const Store = new Vuex.Store<StateInterface>({
     modules: {
-      GhostModule
+      ghostModule
     },
 
     // enable strict mode (adds overhead!)

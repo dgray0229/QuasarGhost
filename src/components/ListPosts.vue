@@ -1,53 +1,31 @@
 <template>
-  <q-page padding>
-    <!-- content -->
-    <div class="q-pa-md">
-      <div class="q-pa-md row items-start q-gutter-md postcard-container">
-        <PostCard
-          class="my-card"
-          v-for="post in posts"
-          :key="post.uuid"
-          :title="post.title"
-          :excerpt="post.custom_excerpt || post.excerpt"
-          :created_at="post.created_at"
-          :feature_image="post.feature_image"
-          :slug="post.slug"
-          :id="post.id"
-        />
-      </div>
+  <!-- content -->
+  <div class="q-pa-md">
+    <div class="q-pa-md row items-start q-gutter-md postcard-container">
+      <PostCard
+        class="my-card"
+        v-for="post in posts"
+        :key="post.uuid"
+        :title="post.title"
+        :excerpt="post.custom_excerpt || post.excerpt"
+        :created_at="post.created_at"
+        :feature_image="post.feature_image"
+        :slug="post.slug"
+        :id="post.id"
+      />
     </div>
-  </q-page>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import { PostsOrPages } from '@tryghost/content-api';
 import PostCard from 'components/PostCard.vue';
 
 export default defineComponent({
   name: 'ListPosts',
   components: { PostCard },
-  data() {
-    return {
-      posts: [] as PostsOrPages | unknown[]
-    };
-  },
-  created: async function() {
-    this.posts.push(
-      ...(await this.$ghost.posts.browse({
-        include: ['tags', 'authors'],
-        fields: [
-          'id',
-          'uuid',
-          'title',
-          'slug',
-          'custom_excerpt',
-          'excerpt',
-          'created_at',
-          'feature_image'
-        ]
-      }))
-    );
+  props: {
+    posts: Array
   }
 });
 </script>

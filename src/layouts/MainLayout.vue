@@ -81,20 +81,26 @@
 </template>
 
 <script lang="ts">
+import { preFetch } from 'quasar/wrappers';
+import { mapGetters, Store } from 'vuex';
 import EssentialLink from 'components/EssentialLink.vue';
 import { defineComponent, ref } from '@vue/composition-api';
-import { Author, Settings, SettingsResponse } from '@tryghost/content-api';
+import { Settings } from '@tryghost/content-api';
+import { GhostStateInterface } from '../store/ghost/state';
 
 type EssentialLink = {
   title: string;
   link: string;
   icon?: string;
   caption?: string;
-
 };
 export default defineComponent({
   name: 'MainLayout',
   components: { EssentialLink },
+  preFetch: preFetch<Store<GhostStateInterface>>(async ({ store }) => {
+    void (await store.dispatch('ghostModule/fetchAllSettings'));
+    void (await store.dispatch('ghostModule/fetchAuthorById', '1'));
+  }),
   setup() {
     const leftDrawerOpen = ref(false);
     return { leftDrawerOpen };
@@ -102,60 +108,35 @@ export default defineComponent({
   data() {
     return {
       essentialLinks: [] as EssentialLink[],
-      secondaryLinks: [] as EssentialLink[],
-      settings: {} as Settings | undefined,
-      author: {} as Author | undefined
+      secondaryLinks: [] as EssentialLink[]
     };
   },
+  computed: {
+    ...mapGetters({
+      settings: 'ghostModule/getSettings',
+      author: 'ghostModule/getAuthor'
+    })
+  },
   methods: {
-    getNavigationLinks: async function(): Promise<EssentialLink[]> {
-      let settings: SettingsResponse | null = null;
-      try {
-        settings = await this.$ghost.settings.browse();
-      } catch ({ message }) {
-        console.error(message);
-      }
-      const navigation = settings?.navigation ?? [];
-      let essentialLinks: EssentialLink[] = navigation.map(navigationItem => ({
+    getNavigationLinks: function(
+      navigation: Settings['navigation']
+    ): EssentialLink[] {
+      if (!navigation) navigation = [];
+      let essentialLinks: EssentialLink[] = navigation?.map(navigationItem => ({
         title: navigationItem?.label,
         caption: '',
         icon: 'article',
-        link: navigationItem?.url,
+        link: navigationItem?.url
       }));
       return essentialLinks;
-    },
-    getSecondaryNavigationLinks: async function(): Promise<EssentialLink[]> {
-      let settings: Settings | null = null;
-      try {
-        settings = await this.$ghost.settings.browse();
-      } catch ({ message }) {
-        console.error(message);
-      }
-      const secondary_navigation = settings?.secondary_navigation ?? [];
-      let secondaryLinks: EssentialLink[] = secondary_navigation.map(
-        navigationItem => ({
-          title: navigationItem?.label,
-          caption: '',
-          icon: 'article',
-          link: navigationItem?.url,
-        })
-      );
-      return secondaryLinks;
-    },
-    getPageAuthor: async function(): Promise<Author | undefined> {
-      let author: Author | undefined;
-      try {
-        author = (await this.$ghost.authors.read({ id: '1' })) ?? {};
-      } catch ({ message }) {
-        console.error(message);
-      }
-      if (author) return author;
     }
   },
-  created: async function() {
-    this.essentialLinks.push(...(await this.getNavigationLinks()));
-    this.secondaryLinks.push(...(await this.getSecondaryNavigationLinks()));
-    this.author = await this.getPageAuthor();
+  created: function() {
+    const settings = this.settings as Settings;
+    this.essentialLinks.push(...this.getNavigationLinks(settings?.navigation));
+    this.secondaryLinks.push(
+      ...this.getNavigationLinks(settings?.secondary_navigation)
+    );
   }
 });
 </script>

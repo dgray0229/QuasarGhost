@@ -1,68 +1,58 @@
 <template>
   <q-page class="row items-top justify-evenly">
-    <div class="q-pa-md carousel-container">
-      <q-carousel
-        animated
-        v-model="slide"
-        horizontal
-        navigation
-        infinite
-        :autoplay="autoplay"
-        arrows
-        transition-prev="slide-right"
-        transition-next="slide-left"
-        @mouseenter="autoplay = false"
-        @mouseleave="autoplay = true"
-      >
-        <q-carousel-slide
-          v-for="tag in tags"
-          :key="tag.uuid"
-          :name="tag.name"
-          :img-src="tag.feature_image"
-        >
-          <div class="absolute-bottom custom-caption">
-            <div class="text-h2">{{ tag.name }}</div>
-            <div class="text-subtitle1">{{ tag.description }}</div>
-          </div>
-        </q-carousel-slide>
-      </q-carousel>
-    </div>
-    <list-posts />
+    <tag-carousel :tags="tags" />
+    <list-posts :posts="posts" />
   </q-page>
 </template>
 
 <script lang="ts">
+import { preFetch } from 'quasar/wrappers';
+import { mapGetters, Store } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
 import ListPosts from 'components/ListPosts.vue';
-import { Tags } from '@tryghost/content-api';
+import TagCarousel from 'components/TagCarousel.vue';
+import { GhostStateInterface } from '../store/ghost/state';
 
 export default defineComponent({
-  components: { ListPosts },
+  components: { ListPosts, TagCarousel },
   name: 'PageIndex',
-  data() {
+  preFetch: preFetch<Store<GhostStateInterface>>(async ({ store }) => {
+    void (await store.dispatch('ghostModule/fetchAllTags', [
+      'uuid',
+      'name',
+      'feature_image'
+    ]));
+    void (await store.dispatch('ghostModule/fetchAllPosts'));
+  }),
+  computed: mapGetters({
+    tags: 'ghostModule/getTags',
+    posts: 'ghostModule/getPosts'
+  }),
+  meta() {
     return {
-      controlType: 'flat',
-      controlTypeOptions: [
-        { value: 'regular', label: 'regular' },
-        { value: 'unelevated', label: 'unelevated' },
-        { value: 'flat', label: 'flat (default)' },
-        { value: 'outline', label: 'outline' },
-        { value: 'push', label: 'push' }
-      ],
+      // sets document title
+      title: 'Home',
+      // optional; sets final title as "Index Page - My Website", useful for multiple level meta
+      titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
 
-      slide: 1,
-      autoplay: true,
-      tags: [] as Tags | unknown[]
+      // meta tags
+      meta: {
+        description: { name: 'description', content: 'TBD' },
+        keywords: { name: 'keywords', content: 'TBD' },
+        equiv: {
+          'http-equiv': 'Content-Type',
+          content: 'text/html; charset=UTF-8'
+        },
+        // note: for Open Graph type metadata you will need to use SSR, to ensure page is rendered by the server
+        ogTitle: {
+          name: 'og:title',
+          // optional; similar to titleTemplate, but allows templating with other meta properties
+          template(ogTitle: string) {
+            return `${ogTitle} - The Blog of Devin Gray`;
+          }
+        }
+      }
     };
-  },
-  created: async function() {
-    this.tags.push(...(await this.$ghost.tags.browse({
-      fields: [
-        'uuid',
-        'name',
-        'feature_image'
-      ]
-    })));
   }
 });
 </script>

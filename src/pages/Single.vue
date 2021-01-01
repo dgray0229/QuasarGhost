@@ -14,9 +14,12 @@
 </template>
 
 <script lang="ts">
+import { preFetch } from 'quasar/wrappers';
+import { mapGetters, Store } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
 import { Route } from 'vue-router';
 import { PostOrPage } from '@tryghost/content-api';
+import { GhostStateInterface } from '../store/ghost/state';
 
 interface Post {
   post: PostOrPage;
@@ -25,35 +28,23 @@ interface Post {
 }
 export default defineComponent({
   name: 'SinglePost',
-  data() {
-    return { slug: '', title: '', post: {} } as Post;
-  },
-  created() {
-    void this.updatePostInfo();
-  },
+  preFetch: preFetch<Store<GhostStateInterface>>(async ({ store, currentRoute }) => {
+    void await store.dispatch('ghostModule/fetchPostInfoBySlug', currentRoute.params.slug);
+  }),
+    computed: mapGetters({
+    post: 'ghostModule/getPost',
+  }),
   watch: {
-    $route(to: Route) {
-      if (this.slug === to.params.slug) return;
-      void this.updatePostInfo();
-    }
-  },
-  methods: {
-    getPost: async function(): Promise<PostOrPage> {
-      const post: PostOrPage = await this.$ghost.posts.read({
-        slug: this.slug
-      });
-      return Promise.resolve(post);
-    },
-    updatePostInfo: async function(): Promise<void> {
-      this.slug = this.$route.params.slug;
-      this.post = await this.getPost();
-      this.title = this.post.title || '';
+    async $route(to: Route, from: Route) {
+      if (from.params.slug === to.params.slug) return;
+      void await this.$store.dispatch('ghostModule/fetchPostInfoBySlug', to.params.slug);
+
     }
   },
   meta() {
     return {
       // sets document title
-      title: `Post`,
+      title: 'Post',
       // optional; sets final title as "Index Page - My Website", useful for multiple level meta
       titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
 

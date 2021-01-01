@@ -5,7 +5,7 @@ import actions from './actions';
 import getters from './getters';
 import mutations from './mutations';
 
-const GhostModule: Module<GhostStateInterface, StateInterface> = {
+const ghostModule: Module<GhostStateInterface, StateInterface> = {
   namespaced: true,
   actions,
   getters,
@@ -13,4 +13,4 @@ const GhostModule: Module<GhostStateInterface, StateInterface> = {
   state
 };
 
-export default GhostModule;
+export default ghostModule;

@@ -5,7 +5,6 @@ const routes: RouteConfig[] = [
     path: '/posts',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Posts.vue') },
       {
         path: ':slug',
         component: () => import('pages/Single.vue'),

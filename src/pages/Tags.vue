@@ -1,29 +1,18 @@
 <template>
   <q-page padding>
     <!-- content -->
-    <div class="q-pa-md">
-      <div class="q-pa-md row items-start q-gutter-md postcard-container">
-        <PostCard
-          class="my-card"
-          v-for="post in posts"
-          :key="post.uuid"
-          :title="post.title"
-          :excerpt="post.custom_excerpt || post.excerpt"
-          :created_at="post.created_at"
-          :feature_image="post.feature_image"
-          :slug="post.slug"
-          :id="post.id"
-        />
-      </div>
-    </div>
+    <list-posts :posts="posts" />
   </q-page>
 </template>
 
 <script lang="ts">
+import { preFetch } from 'quasar/wrappers';
+import { mapGetters, Store } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
 import { Route } from 'vue-router';
 import { PostsOrPages } from '@tryghost/content-api';
-import PostCard from 'components/PostCard.vue';
+import ListPosts from 'components/ListPosts.vue';
+import { GhostStateInterface } from '../store/ghost/state';
 
 interface Posts {
   posts: PostsOrPages | [];
@@ -31,39 +20,28 @@ interface Posts {
 
 export default defineComponent({
   name: 'Tags',
-  data() {
-    return { title: '', posts: [] } as Posts;
+  preFetch: preFetch<Store<GhostStateInterface>>(
+    async ({ store, currentRoute }) => {
+      void (await store.dispatch(
+        'ghostModule/fetchPostsByTags',
+        currentRoute.params.slug
+      ));
+    }
+  ),
+  computed: {
+    ...mapGetters({posts: 'ghostModule/getPosts'}),
   },
-  components: { PostCard },
+  components: { ListPosts },
   watch: {
     async $route(to: Route, from: Route) {
       if (from.params.slug === to.params.slug) return;
-      this.posts = await this.getPostsByTags(this.$route.params.slug);
+      void (await this.$store.dispatch(
+        'ghostModule/fetchPostsByTags',
+        to.params.slug
+      ));
     }
   },
-    methods: {
-    getPostsByTags: async function(slug: string): Promise<PostsOrPages> {
-      const posts = await this.$ghost.posts.browse({
-        filter: [`tag:${slug}`]
-      });
-      return Promise.resolve(posts);
-    },
-  },
-  created: async function() {
-    this.posts = await this.getPostsByTags(this.$route.params.slug);
-  }
 });
 </script>
 <style lang="scss" scoped>
-.postcard-container {
-  .my-card {
-    box-sizing: border-box;
-    width: 300px;
-    padding: 1px;
-    > * {
-      padding: 0.25rem 0.5rem;
-      box-shadow: inset 0 0 0 2px $grey-6;
-    }
-  }
-}
 </style>

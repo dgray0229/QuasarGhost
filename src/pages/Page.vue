@@ -6,34 +6,28 @@
 </template>
 
 <script lang="ts">
+import { preFetch } from 'quasar/wrappers';
+import { mapGetters, Store } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
 import { Route } from 'vue-router';
 import { PostOrPage } from '@tryghost/content-api';
-
+import { GhostStateInterface } from '../store/ghost/state';
 interface Page {
   page: PostOrPage;
 }
 
 export default defineComponent({
   name: 'Page',
-  data() {
-    return { page: {} } as Page;
-  },
-  async created() {
-    this.page = await this.getPage(this.$route.params.slug);
-  },
+  preFetch: preFetch<Store<GhostStateInterface>>(async ({ store, currentRoute }) => {
+    void await store.dispatch('ghostModule/fetchPageInfoBySlug', currentRoute.params.slug);
+  }),
+    computed: mapGetters({
+    page: 'ghostModule/getPage',
+  }),
   watch: {
-    async $route(to: Route, from: Route): Promise<void> {
+    $route(to: Route, from: Route): void {
       if (from.params.slug === to.params.slug) return;
-      this.page = await this.getPage(to.params.slug);
-    }
-  },
-  methods: {
-    getPage: async function(slug: string): Promise<PostOrPage> {
-      const page: PostOrPage = await this.$ghost.pages.read({
-        slug
-      });
-      return Promise.resolve(page);
+      void this.$store.dispatch('ghostModule/fetchPageInfoBySlug', to.params.slug);
     }
   },
   meta() {
