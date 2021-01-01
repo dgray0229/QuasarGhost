@@ -88,6 +88,12 @@ import { defineComponent, ref } from '@vue/composition-api';
 import { Settings } from '@tryghost/content-api';
 import { GhostStateInterface } from '../store/ghost/state';
 
+interface MainSettings extends Settings {
+  secondary_navigation?: Array<{
+    label: string;
+    url: string;
+  }>;
+}
 type EssentialLink = {
   title: string;
   link: string;
@@ -119,7 +125,7 @@ export default defineComponent({
   },
   methods: {
     getNavigationLinks: function(
-      navigation: Settings['navigation']
+      navigation: MainSettings['navigation']
     ): EssentialLink[] {
       if (!navigation) navigation = [];
       let essentialLinks: EssentialLink[] = navigation?.map(navigationItem => ({
@@ -132,7 +138,7 @@ export default defineComponent({
     }
   },
   created: function() {
-    const settings = this.settings as Settings;
+    const settings = this.settings as MainSettings;
     this.essentialLinks.push(...this.getNavigationLinks(settings?.navigation));
     this.secondaryLinks.push(
       ...this.getNavigationLinks(settings?.secondary_navigation)

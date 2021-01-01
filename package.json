@@ -7,15 +7,14 @@
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
-    "test": "echo \"No test specified\" && exit 0",
-    "postinstall": "cd ./node_modules/@tryghost/@types/tryghost_content-api && npm install && npm run build"
+    "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
-    "@tryghost/content-api": "^1.4.7",
+    "@tryghost/content-api": "^1.4.11",
     "@tryghost/helpers": "^1.1.34",
     "@types/dotenv": "^8.2.0",
-    "@types/tryghost__content-api": "https://github.com/dgray0229/DefinitelyTyped.git",
+    "@types/tryghost__content-api": "^1.3.5",
     "@vue/composition-api": "^0.6.4",
     "axios": "^0.18.1",
     "core-js": "^3.6.5",
