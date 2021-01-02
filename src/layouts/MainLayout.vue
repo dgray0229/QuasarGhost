@@ -128,7 +128,7 @@ export default defineComponent({
       navigation: MainSettings['navigation']
     ): EssentialLink[] {
       if (!navigation) navigation = [];
-      let essentialLinks: EssentialLink[] = navigation?.map(navigationItem => ({
+      const essentialLinks: EssentialLink[] = navigation?.map(navigationItem => ({
         title: navigationItem?.label,
         caption: '',
         icon: 'article',
