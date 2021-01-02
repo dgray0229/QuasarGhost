@@ -4,46 +4,42 @@ import { GhostStateInterface } from './state';
 import ghost from '../../config/ghostapi';
 
 const actions: ActionTree<GhostStateInterface, StateInterface> = {
-  async fetchAllPosts({ commit }): Promise<void> {
+  async fetchAllPosts({ commit }, options): Promise<void> {
     const posts = await ghost.posts.browse({
-      include: ['tags', 'authors'],
-      fields: [
-        'id',
-        'uuid',
-        'title',
-        'slug',
-        'custom_excerpt',
-        'excerpt',
-        'created_at',
-        'feature_image'
-      ]
+      ...options
     });
     commit('SET_POSTS', posts);
   },
-  async fetchPageInfoBySlug({ commit }, slug: string): Promise<void> {
-    const page = await ghost.pages.read({ slug }); /*?*/
+  async fetchMorePosts({ commit }, options): Promise<void> {
+    const posts = await ghost.posts.browse({
+      ...options
+    });
+    commit('ADD_POSTS', posts);
+  },
+  async fetchPageInfoBySlug({ commit }, options?): Promise<void> {
+    const page = await ghost.pages.read({ ...options }); /*?*/
     commit('SET_PAGE', page);
   },
-  async fetchPostInfoBySlug({ commit }, slug: string): Promise<void> {
-    const post = await ghost.posts.read({ slug }); /*?*/
+  async fetchPostInfoBySlug({ commit }, options?): Promise<void> {
+    const post = await ghost.posts.read({ ...options }); /*?*/
     commit('SET_POST', post);
   },
-  async fetchAllTags({ commit }, fields: string[]): Promise<void> {
-    const tags = await ghost.tags.browse({fields});
+  async fetchAllTags({ commit }, options?): Promise<void> {
+    const tags = await ghost.tags.browse({ ...options });
     commit('SET_TAGS', tags);
   },
-  async fetchPostsByTags({ commit }, slug: string): Promise<void> {
+  async fetchPostsByTags({ commit }, options?): Promise<void> {
     const postsByTag = await ghost.posts.browse({
-      filter: [`tag:${slug}`]
+      ...options
     });
-    commit('SET_POSTS', postsByTag)
+    commit('SET_POSTS', postsByTag);
   },
-  async fetchAuthorById({ commit }, id: string): Promise<void> {
-    const author = await ghost.authors.read({id});
+  async fetchAuthorById({ commit }, options?): Promise<void> {
+    const author = await ghost.authors.read({ ...options });
     commit('SET_AUTHOR', author);
   },
-  async fetchAuthors({ commit }): Promise<void> {
-    const authors = await ghost.authors.browse();
+  async fetchAuthors({ commit }, options?): Promise<void> {
+    const authors = await ghost.authors.browse({ ...options });
     commit('SET_AUTHORS', authors);
   },
   async fetchAllSettings({ commit }): Promise<void> {

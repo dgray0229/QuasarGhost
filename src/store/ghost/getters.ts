@@ -12,7 +12,8 @@ const getters: GetterTree<GhostStateInterface, StateInterface> = {
   getPages: state => state?.pages,
   getTags: state => state?.tags,
   getSettings: state => state?.settings,
-  getAuthors: state => state?.authors
+  getAuthors: state => state?.authors,
+  getPostsCount: ({ posts }) => posts?.length
 };
 
 export default getters;

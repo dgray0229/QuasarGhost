@@ -12,10 +12,13 @@ const mutation: MutationTree<GhostStateInterface> = {
   SET_PAGE(state, page: PostOrPage) {
     state.page = page;
   },
-  SET_POSTS(state, posts: PostsOrPages) {
+  SET_POSTS(state, posts: PostsOrPages[]) {
     state.posts = posts;
   },
-  SET_PAGES(state, pages: PostsOrPages) {
+  ADD_POSTS(state, posts: PostsOrPages[]) {
+    state.posts?.push(...posts);
+  },
+  SET_PAGES(state, pages: PostsOrPages[]) {
     state.pages = pages;
   },
   SET_TAGS(state, tags: Tags) {

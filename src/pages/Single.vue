@@ -28,17 +28,22 @@ interface Post {
 }
 export default defineComponent({
   name: 'SinglePost',
-  preFetch: preFetch<Store<GhostStateInterface>>(async ({ store, currentRoute }) => {
-    void await store.dispatch('ghostModule/fetchPostInfoBySlug', currentRoute.params.slug);
-  }),
-    computed: mapGetters({
-    post: 'ghostModule/getPost',
+  preFetch: preFetch<Store<GhostStateInterface>>(
+    async ({ store, currentRoute }) => {
+      void (await store.dispatch('ghostModule/fetchPostInfoBySlug', {
+        slug: currentRoute.params.slug
+      }));
+    }
+  ),
+  computed: mapGetters({
+    post: 'ghostModule/getPost'
   }),
   watch: {
     async $route(to: Route, from: Route) {
       if (from.params.slug === to.params.slug) return;
-      void await this.$store.dispatch('ghostModule/fetchPostInfoBySlug', to.params.slug);
-
+      void (await this.$store.dispatch('ghostModule/fetchPostInfoBySlug', {
+        slug: to.params.slug
+      }));
     }
   },
   meta() {

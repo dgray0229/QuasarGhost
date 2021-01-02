@@ -1,47 +1,45 @@
 <template>
   <q-page padding>
     <!-- content -->
-    <list-posts :posts="posts" />
+    <list-posts :postOptions="postOptions" />
   </q-page>
 </template>
 
 <script lang="ts">
-import { preFetch } from 'quasar/wrappers';
-import { mapGetters, Store } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
-import { Route } from 'vue-router';
-import { PostsOrPages } from '@tryghost/content-api';
+import { Params, PostsOrPages } from '@tryghost/content-api';
 import ListPosts from 'components/ListPosts.vue';
-import { GhostStateInterface } from '../store/ghost/state';
 
 interface Posts {
   posts: PostsOrPages | [];
 }
 
+const defaultPostOptions: Params = {
+  include: ['tags', 'authors'],
+  fields: [
+    'id',
+    'uuid',
+    'title',
+    'slug',
+    'custom_excerpt',
+    'excerpt',
+    'created_at',
+    'feature_image'
+  ]
+};
+
 export default defineComponent({
   name: 'Tags',
-  preFetch: preFetch<Store<GhostStateInterface>>(
-    async ({ store, currentRoute }) => {
-      void (await store.dispatch(
-        'ghostModule/fetchPostsByTags',
-        currentRoute.params.slug
-      ));
-    }
-  ),
-  computed: {
-    ...mapGetters({posts: 'ghostModule/getPosts'}),
-  },
   components: { ListPosts },
-  watch: {
-    async $route(to: Route, from: Route) {
-      if (from.params.slug === to.params.slug) return;
-      void (await this.$store.dispatch(
-        'ghostModule/fetchPostsByTags',
-        to.params.slug
-      ));
-    }
+  data() {
+    return { postOptions: {} };
+  },
+  created() {
+    this.postOptions = {
+      ...defaultPostOptions,
+      filter: [`tag:${this.$route.params.slug}`]
+    };
   },
 });
 </script>
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

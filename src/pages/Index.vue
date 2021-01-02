@@ -1,7 +1,7 @@
 <template>
   <q-page class="row items-top justify-evenly">
     <tag-carousel :tags="tags" />
-    <list-posts :posts="posts" />
+    <list-posts :postOptions="postOptions" />
   </q-page>
 </template>
 
@@ -12,22 +12,46 @@ import { defineComponent } from '@vue/composition-api';
 import ListPosts from 'components/ListPosts.vue';
 import TagCarousel from 'components/TagCarousel.vue';
 import { GhostStateInterface } from '../store/ghost/state';
+import { Params, PostsOrPages, Tags } from '@tryghost/content-api';
+
+interface Getters {
+  tags: Tags;
+  posts: PostsOrPages;
+}
+
+const allTagsOptions: Record<string, unknown> = {
+  fields: ['uuid', 'name', 'feature_image', 'description']
+};
+const defaultPostOptions: Params = {
+  include: ['tags', 'authors'],
+  fields: [
+    'id',
+    'uuid',
+    'title',
+    'slug',
+    'custom_excerpt',
+    'excerpt',
+    'created_at',
+    'feature_image'
+  ]
+};
 
 export default defineComponent({
   components: { ListPosts, TagCarousel },
   name: 'PageIndex',
   preFetch: preFetch<Store<GhostStateInterface>>(async ({ store }) => {
-    void (await store.dispatch('ghostModule/fetchAllTags', [
-      'uuid',
-      'name',
-      'feature_image'
-    ]));
-    void (await store.dispatch('ghostModule/fetchAllPosts'));
+    void (await store.dispatch('ghostModule/fetchAllTags', allTagsOptions));
   }),
-  computed: mapGetters({
-    tags: 'ghostModule/getTags',
-    posts: 'ghostModule/getPosts'
-  }),
+  computed: {
+    ...mapGetters({
+      tags: 'ghostModule/getTags'
+    }),
+    postOptions() {
+      return {
+        ...defaultPostOptions
+      };
+    }
+  },
   meta() {
     return {
       // sets document title

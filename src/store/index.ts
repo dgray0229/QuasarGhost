@@ -1,6 +1,6 @@
 import { store } from 'quasar/wrappers';
 import Vuex from 'vuex';
-import GhostStateInterface from './ghost/state';
+import { GhostStateInterface } from './ghost/state';
 // import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
 import ghostModule from './ghost';
@@ -15,7 +15,7 @@ export interface StateInterface {
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   // example: unknown;
-  ghostModule: typeof GhostStateInterface;
+  ghostModule: GhostStateInterface
 }
 
 export default store(function ({ Vue }) {
@@ -23,7 +23,7 @@ export default store(function ({ Vue }) {
 
   const Store = new Vuex.Store<StateInterface>({
     modules: {
-      ghostModule
+      ghostModule,
     },
 
     // enable strict mode (adds overhead!)

@@ -18,16 +18,22 @@ interface Page {
 
 export default defineComponent({
   name: 'Page',
-  preFetch: preFetch<Store<GhostStateInterface>>(async ({ store, currentRoute }) => {
-    void await store.dispatch('ghostModule/fetchPageInfoBySlug', currentRoute.params.slug);
-  }),
-    computed: mapGetters({
-    page: 'ghostModule/getPage',
+  preFetch: preFetch<Store<GhostStateInterface>>(
+    async ({ store, currentRoute }) => {
+      void (await store.dispatch('ghostModule/fetchPageInfoBySlug', {
+        slug: currentRoute.params.slug
+      }));
+    }
+  ),
+  computed: mapGetters({
+    page: 'ghostModule/getPage'
   }),
   watch: {
     $route(to: Route, from: Route): void {
       if (from.params.slug === to.params.slug) return;
-      void this.$store.dispatch('ghostModule/fetchPageInfoBySlug', to.params.slug);
+      void this.$store.dispatch('ghostModule/fetchPageInfoBySlug', {
+        slug: to.params.slug
+      });
     }
   },
   meta() {

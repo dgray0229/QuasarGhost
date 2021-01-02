@@ -105,7 +105,7 @@ export default defineComponent({
   components: { EssentialLink },
   preFetch: preFetch<Store<GhostStateInterface>>(async ({ store }) => {
     void (await store.dispatch('ghostModule/fetchAllSettings'));
-    void (await store.dispatch('ghostModule/fetchAuthorById', '1'));
+    void (await store.dispatch('ghostModule/fetchAuthorById', {id: '1'}));
   }),
   setup() {
     const leftDrawerOpen = ref(false);
@@ -121,7 +121,7 @@ export default defineComponent({
     ...mapGetters({
       settings: 'ghostModule/getSettings',
       author: 'ghostModule/getAuthor'
-    })
+    }),
   },
   methods: {
     getNavigationLinks: function(
@@ -135,13 +135,13 @@ export default defineComponent({
         link: navigationItem?.url
       }));
       return essentialLinks;
-    }
+    },
   },
   created: function() {
-    const settings = this.settings as MainSettings;
-    this.essentialLinks.push(...this.getNavigationLinks(settings?.navigation));
+    const { navigation, secondary_navigation} = this.settings as MainSettings;
+    this.essentialLinks.push(...this.getNavigationLinks(navigation));
     this.secondaryLinks.push(
-      ...this.getNavigationLinks(settings?.secondary_navigation)
+      ...this.getNavigationLinks(secondary_navigation)
     );
   }
 });

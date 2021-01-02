@@ -33,7 +33,6 @@ import { defineComponent } from '@vue/composition-api';
 export default defineComponent({
   name: 'TagCarousel',
   props: {
-    // type check
     tags: Array
   },
   data() {
