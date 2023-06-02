@@ -1,9 +1,11 @@
 import GhostContentAPI from '@tryghost/content-api';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const ghost = new GhostContentAPI({
-  url:  'https://devingray.io',
-  key: '07a56a659476f0a22f7c3b3ed4',
-  version: 'v3'
+  url:  String(process.env.GHOST_URL),
+  key: String(process.env.GHOST_KEY),
+  version: 'v3',
 });
 
 export default ghost;
