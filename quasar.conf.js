@@ -7,11 +7,11 @@
 // https://quasar.dev/quasar-cli/quasar-conf-js
 /* eslint-env node */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const envparser = require('./src/config/envparser.js');
+const envparser = require('./src/config/envparser.js')();
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 const { configure } = require('quasar/wrappers');
-
+const parsedEnv = require('dotenv').config().parsed;
 module.exports = configure(function (ctx) {
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
@@ -27,17 +27,10 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
-    boot: [
-      'composition-api',
-      'i18n',
-      'axios',
-      'ghost-api',
-    ],
+    boot: ['composition-api', 'i18n', 'axios', 'ghost-api'],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
-    css: [
-      'app.scss'
-    ],
+    css: ['app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -50,12 +43,12 @@ module.exports = configure(function (ctx) {
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
       'roboto-font', // optional, you are not bound to it
-      'material-icons', // optional, you are not bound to it
+      'material-icons' // optional, you are not bound to it
     ],
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
-      env: envparser(),
+      env: parsedEnv,
       vueRouterMode: 'history', // available values: 'hash', 'history'
 
       // transpile: false,
@@ -75,17 +68,17 @@ module.exports = configure(function (ctx) {
       // extractCSS: false,
 
       // https://quasar.dev/quasar-cli/handling-webpack
-      extendWebpack (cfg) {
-          // linting is slow in TS projects, we execute it only for production builds
+      extendWebpack(cfg) {
+        // linting is slow in TS projects, we execute it only for production builds
         if (ctx.prod) {
-        cfg.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /node_modules/
-        })
+          cfg.module.rules.push({
+            enforce: 'pre',
+            test: /\.(js|vue)$/,
+            loader: 'eslint-loader',
+            exclude: /node_modules/
+          });
         }
-      },
+      }
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
@@ -117,9 +110,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [
-        'Meta'
-      ]
+      plugins: ['Meta']
     },
 
     // animations: 'all', // --- includes all animations
@@ -189,13 +180,11 @@ module.exports = configure(function (ctx) {
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
-
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',
         // osxSign: '',
         // protocol: 'myapp://path',
-
         // Windows only
         // win32metadata: { ... }
       },
@@ -209,10 +198,10 @@ module.exports = configure(function (ctx) {
       // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
       nodeIntegration: true,
 
-      extendWebpack (/* cfg */) {
+      extendWebpack(/* cfg */) {
         // do something with Electron main process Webpack cfg
         // chainWebpack also available besides this extendWebpack
       }
     }
-  }
+  };
 });

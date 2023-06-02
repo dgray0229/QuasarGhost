@@ -33,6 +33,7 @@ yarn-error.log*
 *.sln
 
 .env
+local.env
 ghost.rest
 .vscode
 netlify.toml
