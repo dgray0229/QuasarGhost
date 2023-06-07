@@ -7,11 +7,10 @@
 // https://quasar.dev/quasar-cli/quasar-conf-js
 /* eslint-env node */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const envparser = require('./src/config/envparser.js')();
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-floating-promises */
+require('dotenv').config();
 const { configure } = require('quasar/wrappers');
-const parsedEnv = require('dotenv').config().parsed;
 module.exports = configure(function(ctx) {
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
@@ -48,7 +47,7 @@ module.exports = configure(function(ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
-      env: parsedEnv,
+      env: process.env.PORT || 80,
       vueRouterMode: 'history', // available values: 'hash', 'history'
 
       // transpile: false,
