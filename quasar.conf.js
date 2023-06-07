@@ -84,7 +84,7 @@ module.exports = configure(function(ctx) {
     devServer: {
       https: false,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      port: envparser.PORT || 80,
+      port: process.env.PORT || 80,
       open: true // opens browser window automatically
     },
 
