@@ -12,7 +12,7 @@ const envparser = require('./src/config/envparser.js')();
 /* eslint-disable @typescript-eslint/no-floating-promises */
 const { configure } = require('quasar/wrappers');
 const parsedEnv = require('dotenv').config().parsed;
-module.exports = configure(function (ctx) {
+module.exports = configure(function(ctx) {
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
     supportTS: {
@@ -85,7 +85,7 @@ module.exports = configure(function (ctx) {
     devServer: {
       https: false,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      port: envparser.port,
+      port: envparser.PORT || 80,
       open: true // opens browser window automatically
     },
 
