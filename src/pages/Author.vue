@@ -18,76 +18,78 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
-import { Route } from 'vue-router';
+import { defineComponent, ref, watch, getCurrentInstance } from 'vue';
+import { useRoute } from 'vue-router';
 import { Author } from '@tryghost/content-api';
+import { GhostAPI } from '@tryghost/content-api';
 
-interface SingleAuthor {
-  author: Author;
-  name: string;
+interface CustomAppContext {
+  $ghost: GhostAPI; // Replace 'any' with the appropriate type for the $ghost object
 }
+
 export default defineComponent({
   name: 'SingleAuthor',
-  data() {
-    return { name: '', author: {} } as SingleAuthor;
-  },
-  async created() {
-    this.author = await this.getAuthor(this.$route.params.slug);
-  },
-  methods: {
-    getAuthor: async function(slug: string): Promise<Author> {
-      const author: Author = await this.$ghost.authors.read({
-        slug
-      });
-      return Promise.resolve(author);
-    },
-  },
-  watch: {
-    async $route(to: Route, from: Route) {
-      if (from.params.slug === to.params.slug) return;
-      this.author = await this.getAuthor(this.$route.params.slug);
-    }
-  },
-  meta() {
-    return {
-      // sets document title
-      title: 'post',
-      // optional; sets final title as "Index Page - My Website", useful for multiple level meta
-      titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
+  setup() {
+    const author = ref<Author | null>(null);
+    const route = useRoute();
+    const appInstance = getCurrentInstance()?.appContext.app as CustomAppContext | undefined; // Update the type
 
-      // meta tags
-      meta: {
-        description: {
-          name: 'description',
-          content: 'TBD'
-        },
-        keywords: { name: 'keywords', content: 'The Blog of Devin Gray' },
-        equiv: {
-          'http-equiv': 'Content-Type',
-          content: 'text/html; charset=UTF-8'
-        },
-        // note: for Open Graph type metadata you will need to use SSR, to ensure page is rendered by the server
-        ogTitle: {
-          name: 'og:title',
-          // optional; similar to titleTemplate, but allows templating with other meta properties
-          template(ogTitle: string) {
-            return `${ogTitle} - The Blog of Devin Gray`;
-          }
-        }
+    const getAuthor = async (slug: string): Promise<Author> => {
+      if (appInstance) {
+        const author: Author = await appInstance.$ghost.authors.read({ slug }); // Access the $ghost object from the app instance
+        return author;
+      } else {
+        throw new Error('Unable to access $ghost object.');
       }
     };
-  }
+
+    const fetchAuthor = async () => {
+      author.value = await getAuthor(route.params.slug as string);
+    };
+
+    watch(
+      () => route.params.slug,
+      async (to, from) => {
+        if (from === to) return;
+        await fetchAuthor();
+      }
+    );
+
+    fetchAuthor();
+
+    return {
+      author,
+    };
+  },
+  head() {
+    return {
+      title: 'post',
+      titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
+      meta: [
+        { name: 'description', content: 'TBD' },
+        { name: 'keywords', content: 'The Blog of Devin Gray' },
+        { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' },
+        {
+          name: 'og:title',
+          template: (ogTitle: string) => `${ogTitle} - The Blog of Devin Gray`,
+        },
+      ],
+    };
+  },
 });
 </script>
+
 <style lang="scss">
 main {
   max-width: 100%;
   overflow: hidden;
+
   .blog-jumbotron {
     > .q-parallax__content.absolute-full {
       background-color: rgba(0, 0, 0, 0.7);
     }
   }
+
   >>> article {
     pre,
     code {

@@ -1,6 +1,7 @@
 import { PostOrPage, PostsOrPages, Tags, Settings, Authors, Author } from '@tryghost/content-api';
 
 export interface GhostStateInterface {
+ghostModule: any;
   title: string;
   author: Author | Record<string, unknown>;
   post: PostOrPage | Record<string, unknown>;
@@ -21,7 +22,8 @@ const state: GhostStateInterface = {
   pages: [],
   tags: [],
   authors: [],
-  settings: []
+  settings: [],
+  ghostModule: undefined
 };
 
 export default state;

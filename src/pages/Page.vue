@@ -5,62 +5,70 @@
   </q-page>
 </template>
 
-<script lang="ts">
-import { preFetch } from 'quasar/wrappers';
-import { mapGetters, Store } from 'vuex';
-import { defineComponent } from '@vue/composition-api';
-import { Route } from 'vue-router';
-import { PostOrPage } from '@tryghost/content-api';
-import { GhostStateInterface } from '../store/ghost/state';
-interface Page {
-  page: PostOrPage;
-}
+<script>
+import { defineComponent, onBeforeUpdate } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   name: 'Page',
-  preFetch: preFetch<Store<GhostStateInterface>>(
-    async ({ store, currentRoute }) => {
-      void (await store.dispatch('ghostModule/fetchPageInfoBySlug', {
-        slug: currentRoute.params.slug
-      }));
-    }
-  ),
-  computed: mapGetters({
-    page: 'ghostModule/getPage'
-  }),
-  watch: {
-    $route(to: Route, from: Route): void {
-      if (from.params.slug === to.params.slug) return;
-      void this.$store.dispatch('ghostModule/fetchPageInfoBySlug', {
-        slug: to.params.slug
-      });
-    }
+  computed: {
+    page() {
+      return this.$store.getters['ghostModule/getPage'];
+    },
   },
-  meta() {
+  async mounted() {
+    await this.fetchPageInfoBySlug(this.$route.params.slug);
+  },
+  methods: {
+    async fetchPageInfoBySlug(slug) {
+      await this.$store.dispatch('ghostModule/fetchPageInfoBySlug', {
+        slug,
+      });
+    },
+  },
+  watch: {
+    $route(to, from) {
+      if (from.params.slug === to.params.slug) return;
+      this.fetchPageInfoBySlug(to.params.slug);
+    },
+  },
+  setup() {
+    const store = useStore;
+    const route = useRoute();
+
+    onBeforeUpdate(async (to) => {
+      if (to.params.slug !== route.value.params.slug) {
+        await store.dispatch('ghostModule/fetchPageInfoBySlug', {
+          slug: to.params.slug,
+        });
+      }
+    });
+
+    return {
+      store,
+      route,
+    };
+  },
+  head() {
     return {
       // sets document title
       title: 'Page',
       // optional; sets final title as "Index Page - My Website", useful for multiple level meta
-      titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
+      titleTemplate: (title) => `${title} - The Blog of Devin Gray`,
 
       // meta tags
-      meta: {
-        description: { name: 'description', content: 'TBD' },
-        keywords: { name: 'keywords', content: 'TBD' },
-        equiv: {
-          'http-equiv': 'Content-Type',
-          content: 'text/html; charset=UTF-8'
-        },
-        // note: for Open Graph type metadata you will need to use SSR, to ensure page is rendered by the server
-        ogTitle: {
+      meta: [
+        { name: 'description', content: 'TBD' },
+        { name: 'keywords', content: 'TBD' },
+        { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' },
+        {
           name: 'og:title',
           // optional; similar to titleTemplate, but allows templating with other meta properties
-          template(ogTitle: string) {
-            return `${ogTitle} - The Blog of Devin Gray`;
-          }
-        }
-      }
+          template: (ogTitle) => `${ogTitle} - The Blog of Devin Gray`,
+        },
+      ],
     };
-  }
+  },
 });
 </script>

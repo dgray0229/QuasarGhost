@@ -1,6 +1,6 @@
-import { RouteConfig } from 'vue-router';
+import { RouteRecordRaw } from 'vue-router';
 
-const routes: RouteConfig[] = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/posts',
     component: () => import('layouts/MainLayout.vue'),
@@ -8,9 +8,9 @@ const routes: RouteConfig[] = [
       {
         path: ':slug',
         component: () => import('pages/Single.vue'),
-        name: 'single'
-      }
-    ]
+        name: 'single',
+      },
+    ],
   },
   {
     path: '/',
@@ -20,26 +20,26 @@ const routes: RouteConfig[] = [
       {
         path: 'tag/:slug',
         component: () => import('pages/Tags.vue'),
-        name: 'List'
+        name: 'List',
       },
       {
         path: 'author/:slug',
         component: () => import('pages/Author.vue'),
-        name: 'SingleAuthor'
+        name: 'SingleAuthor',
       },
       {
         path: ':slug',
         component: () => import('pages/Page.vue'),
-        name: 'page'
+        name: 'page',
       },
-    ]
+    ],
   },
   // Always leave this as last one,
   // but you can also remove it
   {
-    path: '*',
-    component: () => import('pages/Error404.vue')
-  }
+    path: '/:catchAll(.*)',
+    component: () => import('pages/Error404.vue'),
+  },
 ];
 
 export default routes;

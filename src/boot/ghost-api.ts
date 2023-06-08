@@ -1,14 +1,21 @@
+import { createApp, AppConfig } from 'vue';
 import { GhostAPI } from '@tryghost/content-api';
-import { boot } from 'quasar/wrappers';
 import ghost from '../config/ghostapi';
 
-declare module 'vue/types/vue' {
-  interface Vue {
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
     $ghost: GhostAPI;
   }
 }
 
-export default boot(({ Vue }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  Vue.prototype.$ghost = ghost;
-});
+const app = createApp({});
+
+  if (!app.config) {
+    app.config = {} as AppConfig;
+  }
+
+app.config.globalProperties.$ghost = ghost;
+
+app.mount('#app');
+
+export default app;

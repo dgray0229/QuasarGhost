@@ -1,6 +1,7 @@
-import VueCompositionApi from '@vue/composition-api';
-import { boot } from 'quasar/wrappers';
+import { createApp } from 'vue';
+import createCompositionApi from '@vue/composition-api';
 
-export default boot(({ Vue }) => {
-  Vue.use(VueCompositionApi);
-});
+const app = createApp({});
+app.use(createCompositionApi);
+
+export default app;

@@ -16,60 +16,64 @@
         />
       </div>
     </div>
-    <template v-slot:loading>
+    <template #loading>
       <div class="row justify-center q-my-md">
         <q-spinner-dots color="primary" size="40px" />
       </div>
     </template>
   </q-infinite-scroll>
 </template>
-<script lang="ts">
-import { defineComponent } from '@vue/composition-api';
-import { Params, PostsOrPages } from '@tryghost/content-api';
-import { Route } from 'vue-router';
+<script>
+import { defineComponent, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import PostCard from 'components/PostCard.vue';
-interface Props {
-  posts: PostsOrPages;
-}
+
 export default defineComponent({
   name: 'ListPosts',
   components: { PostCard },
   props: {
     postOptions: Object
   },
-  data() {
-    return { posts: [] as PostsOrPages | unknown[] };
-  },
-  async created() {
-    const posts = await this.$ghost.posts.browse({
-      ...this.postOptions
-    } as Params);
-    this.posts.push(...posts);
-  },
-  methods: {
-    async onLoad(index: number, done: (bool?: boolean) => void) {
+  setup(props) {
+    const posts = ref([]);
+
+    const { ghost } = window;
+
+    const onLoad = async (index, done) => {
       let stopIndex = Infinity;
-      const newPosts = await this.$ghost.posts.browse({
-        ...this.postOptions,
+      const newPosts = await ghost.posts.browse({
+        ...props.postOptions,
         page: index
-      } as Params);
-      if (newPosts) this.posts.push(...newPosts);
+      });
+      if (newPosts) posts.value.push(...newPosts);
       if (!newPosts.length) stopIndex = index;
       done(index >= stopIndex);
     }
-  },
-  watch: {
-    async $route(to: Route, from: Route) {
-      if (from.params.slug === to.params.slug) return;
-      const posts = await this.$ghost.posts.browse({
-        ...this.postOptions,
-      } as Params);
-      this.posts = posts;
+
+    const route = useRoute();
+
+    const loadPosts = async () => {
+      const postsData = await ghost.posts.browse({
+        ...props.postOptions
+      });
+      posts.value = postsData;
+    }
+
+    loadPosts();
+
+    // const loadPostsOnRouteChange = async (to, from) => {
+    //   if (from.params.slug === to.params.slug) return;
+    //   await loadPosts();
+    // }
+
+    return {
+      posts,
+      onLoad,
     }
   }
-});
+})
 </script>
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .postcard-container {
   .my-card {
     box-sizing: border-box;

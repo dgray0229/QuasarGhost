@@ -1,13 +1,15 @@
 import axios, { AxiosInstance } from 'axios';
-import { boot } from 'quasar/wrappers';
+import { App, AppConfig } from 'vue';
 
-declare module 'vue/types/vue' {
-  interface Vue {
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
     $axios: AxiosInstance;
   }
 }
 
-export default boot(({ Vue }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  Vue.prototype.$axios = axios;
-});
+export default function axiosPlugin(app: App) {
+    if (!app.config) {
+      app.config = {} as AppConfig;
+    }
+  app.config.globalProperties.$axios = axios;
+}

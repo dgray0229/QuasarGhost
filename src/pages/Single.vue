@@ -14,39 +14,32 @@
 </template>
 
 <script lang="ts">
-import { preFetch } from 'quasar/wrappers';
-import { mapGetters, Store } from 'vuex';
-import { defineComponent } from '@vue/composition-api';
-import { Route } from 'vue-router';
+import { onMounted, ref } from 'vue';
+import { useStore } from 'vuex';
+import { RouteLocationNormalized } from 'vue-router';
 import { PostOrPage } from '@tryghost/content-api';
 import { GhostStateInterface } from '../store/ghost/state';
 
-interface Post {
-  post: PostOrPage;
-  slug: string;
-  title: string;
-}
-export default defineComponent({
+export default {
   name: 'SinglePost',
-  preFetch: preFetch<Store<GhostStateInterface>>(
-    async ({ store, currentRoute }) => {
-      void (await store.dispatch('ghostModule/fetchPostInfoBySlug', {
-        slug: currentRoute.params.slug
-      }));
-    }
-  ),
-  computed: mapGetters({
-    post: 'ghostModule/getPost'
-  }),
-  watch: {
-    async $route(to: Route, from: Route) {
-      if (from.params.slug === to.params.slug) return;
-      void (await this.$store.dispatch('ghostModule/fetchPostInfoBySlug', {
-        slug: to.params.slug
-      }));
-    }
+  setup() {
+    const store = useStore<GhostStateInterface>();
+    const post = ref<PostOrPage | null>(null);
+
+    const fetchPostInfoBySlug = async (slug: string) => {
+      await store.dispatch('ghostModule/fetchPostInfoBySlug', { slug });
+      post.value = store.state.ghostModule.currentPost;
+    };
+
+    onMounted(async () => {
+      await fetchPostInfoBySlug(store.state.ghostModule.currentPostSlug);
+    });
+
+    return {
+      post,
+    };
   },
-  meta() {
+  head() {
     return {
       // sets document title
       title: 'Post',
@@ -54,29 +47,21 @@ export default defineComponent({
       titleTemplate: (title: string) => `${title} - The Blog of Devin Gray`,
 
       // meta tags
-      meta: {
-        description: {
-          name: 'description',
-          content: 'TBD'
-        },
-        keywords: { name: 'keywords', content: 'The Blog of Devin Gray' },
-        equiv: {
-          'http-equiv': 'Content-Type',
-          content: 'text/html; charset=UTF-8'
-        },
-        // note: for Open Graph type metadata you will need to use SSR, to ensure page is rendered by the server
-        ogTitle: {
+      meta: [
+        { name: 'description', content: 'TBD' },
+        { name: 'keywords', content: 'The Blog of Devin Gray' },
+        { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' },
+        {
           name: 'og:title',
           // optional; similar to titleTemplate, but allows templating with other meta properties
-          template(ogTitle: string) {
-            return `${ogTitle} - The Blog of Devin Gray`;
-          }
-        }
-      }
+          template: (ogTitle: string) => `${ogTitle} - The Blog of Devin Gray`,
+        },
+      ],
     };
-  }
-});
+  },
+};
 </script>
+
 <style lang="scss">
 main {
   max-width: 100%;

@@ -1,27 +1,22 @@
-import { route } from 'quasar/wrappers';
-import VueRouter from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import { Store } from 'vuex';
-import  GhostStateInterface  from '../store';
+import GhostStateInterface from '../store';
 import routes from './routes';
 
-/*
- * If not building with SSR mode, you can
- * directly export the Router instantiation
- */
-
-export default route<Store<typeof GhostStateInterface>>(function({ Vue }) {
-  Vue.use(VueRouter);
-
-  const Router = new VueRouter({
-    scrollBehavior: () => ({ x: 0, y: 0 }),
+export default function (store: Store<typeof GhostStateInterface>) {
+  const router = createRouter({
+    history: createWebHistory(process.env.BASE_URL),
     routes,
-
-    // Leave these as is and change from quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
-    mode: process.env.VUE_ROUTER_MODE,
-    base: process.env.VUE_ROUTER_BASE
+    scrollBehavior: () => ({ left: 0, top: 0 }),
   });
 
-  return Router;
-});
+  router.beforeEach((to, from, next) => {
+    if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
+      next('/login');
+    } else {
+      next();
+    }
+  });
+
+  return router;
+}
