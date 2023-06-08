@@ -47,7 +47,7 @@ module.exports = configure(function(ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
-      env: process.env.GHOST_SERVER_PORT || 80,
+      env: {...process.env},
       vueRouterMode: 'history', // available values: 'hash', 'history'
 
       // transpile: false,
@@ -84,7 +84,7 @@ module.exports = configure(function(ctx) {
     devServer: {
       https: false,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      port: process.env.PORT || 80,
+      port: process.env.GHOST_SERVER_PORT || 80,
       open: true, // opens browser window automatically
     },
 
