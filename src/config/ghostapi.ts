@@ -1,9 +1,9 @@
-import GhostContentAPI from '@tryghost/content-api';
+import GhostContentAPI, { GhostContentAPIOptions } from '@tryghost/content-api';
 
 const ghost = new GhostContentAPI({
-  url:  'https://devingray.io',
-  key: '07a56a659476f0a22f7c3b3ed4',
-  version: 'v3'
+  url: String(process.env.GHOST_BASE_URL),
+  key: String(process.env.GHOST_API_KEY),
+  version: String(process.env.GHOST_API_VERSION) as GhostContentAPIOptions['version'],
 });
 
 export default ghost;
